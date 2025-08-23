@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Notices</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+      min-height: 100vh;
+    }
+    .container {
+      max-width: 800px;
+      margin: 30px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+    }
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: #2a5298;
+    }
+
+    /* ✅ Add button */
+    .add-btn {
+      display: inline-block;
+      margin-bottom: 20px;
+      background: #28a745;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 6px;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .add-btn:hover { background: #1e7e34; }
+
+    /* ✅ Notice card */
+    .notice-card {
+      background: #fdfdfd;
+      border: 1px solid #ddd;
+      padding: 20px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+      box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    .notice-title {
+      font-size: 18px;
+      font-weight: bold;
+      color: #1e3c72;
+      margin-bottom: 8px;
+    }
+    .notice-content {
+      font-size: 15px;
+      color: #444;
+      margin-bottom: 12px;
+    }
+    .notice-time {
+      font-size: 13px;
+      color: #666;
+      margin-bottom: 12px;
+    }
+    .actions {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      text-decoration: none;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-edit { background: #007bff; }
+    .btn-edit:hover { background: #0056b3; }
+    .btn-delete { background: #dc3545; }
+    .btn-delete:hover { background: #a71d2a; }
+
+    @media(max-width: 600px) {
+      .container { margin: 15px; padding: 15px; }
+      .notice-title { font-size: 16px; }
+      .notice-content { font-size: 14px; }
+    }
+  </style>
+</head>
+<body>
+
+  {% include 'navbar.html' %}
+
+  <div class="container">
+    <h2>📢 Notices</h2>
+
+    {# ✅ Show Add button only to Admin #}
+    {% if current_user.is_authenticated and current_user.email == "admincitysahayak@gmail.com" %}
+      <a href="{{ url_for('add_notice') }}" class="add-btn">➕ Add New Notice</a>
+    {% endif %}
+
+    {% if notices %}
+      {% for notice in notices %}
+      <div class="notice-card">
+        <div class="notice-title">{{ notice.title }}</div>
+        <div class="notice-content">{{ notice.content }}</div>
+        <div class="notice-time">📅 {{ notice.formatted_time }}</div>
+
+        {# ✅ Show Edit/Delete only to Admin #}
+        {% if current_user.is_authenticated and current_user.email == "admincitysahayak@gmail.com" %}
+        <div class="actions">
+          <a href="{{ url_for('edit_notice', notice_id=notice.id) }}" class="btn btn-edit">✏ Edit</a>
+          <form method="POST" action="{{ url_for('delete_notice', notice_id=notice.id) }}" style="display:inline;">
+            <button type="submit" class="btn btn-delete" onclick="return confirm('Delete this notice?')">🗑 Delete</button>
+          </form>
+        </div>
+        {% endif %}
+      </div>
+      {% endfor %}
+    {% else %}
+      <p>No notices available.</p>
+    {% endif %}
+  </div>
+
+</body>
+</html>
