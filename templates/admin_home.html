@@ -1,0 +1,35 @@
+<!-- templates/admin_home.html -->
+{% extends "dashboard.html" %}
+
+{% block content %}
+<div class="container mt-4">
+  <h2 class="mb-4">Admin Dashboard</h2>
+
+  <h4>👥 Registered Users</h4>
+  <ul class="list-group mb-4">
+    {% for user in users %}
+      <li class="list-group-item">{{ user.username }} - {{ user.email }}</li>
+    {% else %}
+      <li class="list-group-item text-muted">No users found.</li>
+    {% endfor %}
+  </ul>
+
+  <h4>📌 Reported Incidents</h4>
+  <ul class="list-group mb-4">
+    {% for incident in incidents %}
+      <li class="list-group-item">{{ incident.title }} - {{ incident.status }}</li>
+    {% else %}
+      <li class="list-group-item text-muted">No incidents reported.</li>
+    {% endfor %}
+  </ul>
+
+  <h4>📢 Notices</h4>
+  <ul class="list-group">
+    {% for notice in notices %}
+      <li class="list-group-item">{{ notice.title }} - {{ notice.description }}</li>
+    {% else %}
+      <li class="list-group-item text-muted">No notices available.</li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

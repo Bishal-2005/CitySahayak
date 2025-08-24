@@ -14,64 +14,35 @@
       background: #f4f6f9;
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     }
-
     .navbar {
       box-shadow: 0px 2px 6px rgba(0,0,0,0.2);
     }
-
     .card {
       border-radius: 15px;
       box-shadow: 0px 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
     }
-
     .card-header {
       font-size: 1.2rem;
       font-weight: bold;
     }
-
-    table {
-      border-radius: 10px;
-      overflow: hidden;
-    }
-
-    table th {
-      background: #f8f9fa;
+    table th, table td {
       text-align: center;
-    }
-
-    table td {
       vertical-align: middle;
     }
-
-    /* Responsive: table scroll */
-    .table-responsive {
-      overflow-x: auto;
+    .dashboard-title {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #2c3e50;
+      margin-bottom: 20px;
     }
-
-    /* Notice styling */
     .list-group-item {
       border-radius: 10px;
       margin-bottom: 8px;
       background: #fffbea;
     }
-
     .list-group-item strong {
       color: #2c3e50;
-    }
-
-    .dashboard-title {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #2c3e50;
-    }
-
-    @media (max-width: 768px) {
-      .dashboard-title {
-        font-size: 1.5rem;
-      }
-      .card-header {
-        font-size: 1rem;
-      }
     }
   </style>
 </head>
@@ -99,20 +70,21 @@
 
   <!-- Dashboard Container -->
   <div class="container">
-    <h1 class="dashboard-title text-center mb-4">Admin Dashboard</h1>
+    <h1 class="dashboard-title text-center">Admin Dashboard</h1>
 
     <!-- Users Section -->
-    <div class="card mb-4">
+    <div class="card">
       <div class="card-header bg-primary text-white">
         Registered Users
       </div>
       <div class="card-body table-responsive">
         {% if users %}
-          <table class="table table-bordered table-hover align-middle text-center">
-            <thead>
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
               <tr>
                 <th>ID</th>
                 <th>Username</th>
+                <th>Email</th>
               </tr>
             </thead>
             <tbody>
@@ -120,6 +92,7 @@
               <tr>
                 <td>{{ user.id }}</td>
                 <td>{{ user.username }}</td>
+                <td>{{ user.email }}</td>
               </tr>
               {% endfor %}
             </tbody>
@@ -131,21 +104,23 @@
     </div>
 
     <!-- Incidents Section -->
-    <div class="card mb-4">
+    <div class="card">
       <div class="card-header bg-success text-white">
         Reported Incidents
       </div>
       <div class="card-body table-responsive">
         {% if incidents %}
-          <table class="table table-bordered table-hover align-middle text-center">
-            <thead>
+          <table class="table table-bordered table-hover">
+            <thead class="table-light">
               <tr>
                 <th>ID</th>
                 <th>Title</th>
                 <th>Description</th>
                 <th>Location</th>
                 <th>Reported By</th>
+                <th>Status</th>
                 <th>Timestamp</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
@@ -155,8 +130,20 @@
                 <td>{{ incident.title }}</td>
                 <td>{{ incident.description }}</td>
                 <td>{{ incident.location }}</td>
-                <td>{{ incident.user.username }}</td>
+                <td>{{ incident.user.email }}</td>
+                <td>{{ incident.status }}</td>
                 <td>{{ incident.timestamp }}</td>
+                <td>
+                  <!-- Admin can update status -->
+                  <form action="{{ url_for('update_incident_status', incident_id=incident.id) }}" method="POST" class="d-flex">
+                    <select name="status" class="form-select form-select-sm me-2">
+                      <option value="Pending" {% if incident.status == "Pending" %}selected{% endif %}>Pending</option>
+                      <option value="Processing" {% if incident.status == "Processing" %}selected{% endif %}>Processing</option>
+                      <option value="Resolved" {% if incident.status == "Resolved" %}selected{% endif %}>Resolved</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                  </form>
+                </td>
               </tr>
               {% endfor %}
             </tbody>
@@ -168,11 +155,26 @@
     </div>
 
     <!-- Notices Section -->
-    <div class="card mb-4">
+    <div class="card">
       <div class="card-header bg-warning">
         Notices
       </div>
       <div class="card-body">
+        <!-- Form to add new notice -->
+        <form action="{{ url_for('add_notice') }}" method="POST" class="mb-3">
+          <div class="row g-2">
+            <div class="col-md-4">
+              <input type="text" name="title" class="form-control" placeholder="Notice Title" required>
+            </div>
+            <div class="col-md-6">
+              <input type="text" name="content" class="form-control" placeholder="Notice Content" required>
+            </div>
+            <div class="col-md-2">
+              <button type="submit" class="btn btn-success w-100">Add Notice</button>
+            </div>
+          </div>
+        </form>
+
         {% if notices %}
           <ul class="list-group">
             {% for notice in notices %}

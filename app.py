@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 from sqlalchemy import or_
 
 # =======================================
-# Flask App Setuppp
+# Flask App Setup
 # =======================================
 app = Flask(__name__)
 
@@ -32,7 +32,6 @@ for folder in (UPLOAD_FOLDER, PROFILE_FOLDER):
 # Init extensions
 db = SQLAlchemy(app)
 bcrypt = Bcrypt(app)
-
 login_manager = LoginManager(app)
 login_manager.login_view = 'login'
 
@@ -50,10 +49,7 @@ class User(db.Model, UserMixin):
     state = db.Column(db.String(100))
     pin = db.Column(db.String(10))
     profile_image = db.Column(db.String(200))
-
-    # ✅ Relationship: ek user ke multiple incidents
     incidents = db.relationship('Incident', backref='user', lazy=True)
-
 
 class Incident(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -63,18 +59,14 @@ class Incident(db.Model):
     category = db.Column(db.String(50), nullable=False)
     image = db.Column(db.String(200))
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
+    status = db.Column(db.String(20), default="Pending")
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
-
-    # ab incident.user se user object milega
-    # aur incident.user.name ya incident.user.email use kar paoge
-
 
 class Notice(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(200), nullable=False)
     content = db.Column(db.Text, nullable=False)
     timestamp = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-
 
 # =======================================
 # Helpers
@@ -164,14 +156,29 @@ def register():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        user = User.query.filter_by(name=request.form['username']).first()
-        if user and bcrypt.check_password_hash(user.password, request.form['password']):
+        # Safely get form data
+        email = request.form.get('email')
+        password = request.form.get('password')
+
+        if not email or not password:
+            flash('Please enter both email and password', 'warning')
+            return redirect(url_for('login'))
+
+        # Query user by email
+        user = User.query.filter_by(email=email).first()
+
+        if user and bcrypt.check_password_hash(user.password, password):
             login_user(user)
             flash('Logged in successfully!', 'success')
+            if is_admin():
+                return redirect(url_for('admin_home'))
             return redirect(url_for('dashboard'))
         else:
-            flash('Invalid username or password', 'danger')
+            flash('Invalid email or password', 'danger')
+            return redirect(url_for('login'))
+
     return render_template('login.html')
+
 
 @app.route('/logout')
 @login_required
@@ -180,19 +187,59 @@ def logout():
     flash('You have been logged out.', 'info')
     return redirect(url_for('login'))
 
-# ✅ अब यहाँ Admin Dashboard route डालो
-@app.route('/admin')
+# ---------- Profile ----------
+@app.route('/profile', methods=['GET', 'POST'])
 @login_required
-def admin_dashboard():
+def profile():
+    if request.method == 'POST':
+        current_user.name = request.form.get('name') or current_user.name
+        current_user.email = request.form.get('email') or current_user.email
+        current_user.dob = request.form.get('dob') or None
+        current_user.gender = request.form.get('gender') or None
+        current_user.address = request.form.get('address') or None
+        current_user.state = request.form.get('state') or None
+        current_user.pin = request.form.get('pin') or None
+        pfile = request.files.get('profile_image')
+        if pfile and pfile.filename and allowed_file(pfile.filename):
+            filename = unique_filename(pfile.filename, prefix=f"user{current_user.id}_")
+            save_path = os.path.join(app.config['PROFILE_FOLDER'], filename)
+            pfile.save(save_path)
+            if current_user.profile_image and current_user.profile_image != filename:
+                try:
+                    os.remove(os.path.join(app.config['PROFILE_FOLDER'], current_user.profile_image))
+                except Exception:
+                    pass
+            current_user.profile_image = filename
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('profile'))
+    return render_template('profile.html', user=current_user)
+
+# ---------- Admin Home ----------
+@app.route('/admin_home')
+@login_required
+def admin_home():
     if not is_admin():
         abort(403)
     users = User.query.all()
     incidents = Incident.query.order_by(Incident.timestamp.desc()).all()
     notices = Notice.query.order_by(Notice.timestamp.desc()).all()
-    return render_template("admin_dashboard.html", users=users, incidents=incidents, notices=notices)
+    return render_template("admin_home.html", users=users, incidents=incidents, notices=notices)
 
+@app.route('/incident/<int:incident_id>/status', methods=['POST'])
+@login_required
+def update_incident_status(incident_id):
+    if not is_admin():
+        abort(403)
+    inc = Incident.query.get_or_404(incident_id)
+    new_status = request.form.get("status")
+    if new_status in ["Pending", "Processing", "Resolved"]:
+        inc.status = new_status
+        db.session.commit()
+        flash("Incident status updated!", "success")
+    return redirect(url_for('admin_home'))
 
-# ---------- Dashboard ----------
+# ---------- Dashboard (User) with filters, pagination ----------
 @app.route('/dashboard')
 @login_required
 def dashboard():
@@ -207,7 +254,9 @@ def dashboard():
     per_page = max(3, min(per_page, 20))
     sort = sort if sort in ('newest', 'oldest') else 'newest'
 
-    query = Incident.query.filter_by(user_id=current_user.id)
+    query = Incident.query
+    if not is_admin():
+        query = query.filter_by(user_id=current_user.id)
 
     if q:
         like = f"%{q}%"
@@ -232,7 +281,6 @@ def dashboard():
         query = query.order_by(Incident.timestamp.desc())
 
     incidents = query.paginate(page=page, per_page=per_page, error_out=False)
-
     for inc in incidents.items:
         inc.formatted_time = india_time(inc.timestamp)
 
@@ -250,13 +298,11 @@ def report():
         description = request.form['description']
         location = request.form['location']
         category = request.form['category']
-
         image_file = request.files.get('image')
         image_filename = None
         if image_file and image_file.filename and allowed_file(image_file.filename):
             image_filename = unique_filename(image_file.filename, prefix="inc_")
             image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
-
         new_incident = Incident(
             title=title,
             description=description,
@@ -269,34 +315,40 @@ def report():
         db.session.commit()
         flash("Incident reported successfully!", "success")
         return redirect(url_for('dashboard'))
-
     return render_template('incident_form.html')
 
 # ---------- Edit/Delete Incident ----------
 @app.route('/incident/<int:incident_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_incident(incident_id):
-    inc = Incident.query.filter_by(id=incident_id, user_id=current_user.id).first_or_404()
+    inc = Incident.query.get_or_404(incident_id)
+    if inc.user_id != current_user.id and not is_admin():
+        abort(403)
     if request.method == 'POST':
-        inc.title = request.form['title']
-        inc.description = request.form['description']
-        inc.location = request.form['location']
-
-        file = request.files.get('image')
-        if file and file.filename and allowed_file(file.filename):
-            image_filename = unique_filename(file.filename, prefix="inc_")
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
+        title = request.form.get('title', '').strip()
+        description = request.form.get('description', '').strip()
+        location = request.form.get('location', '').strip()
+        category = request.form.get('category', '').strip()
+        image_file = request.files.get('image')
+        if image_file and image_file.filename and allowed_file(image_file.filename):
+            image_filename = unique_filename(image_file.filename, prefix="inc_")
+            image_file.save(os.path.join(app.config['UPLOAD_FOLDER'], image_filename))
             inc.image = image_filename
-
+        inc.title = title
+        inc.description = description
+        inc.location = location
+        inc.category = category
         db.session.commit()
-        flash('Incident updated.', 'success')
+        flash("Incident updated successfully!", "success")
         return redirect(url_for('dashboard'))
-    return render_template('incident_form.html', incident=inc)
+    return render_template('edit_incident.html', incident=inc)
 
 @app.route('/incident/<int:incident_id>/delete', methods=['POST'])
 @login_required
 def delete_incident(incident_id):
-    inc = Incident.query.filter_by(id=incident_id, user_id=current_user.id).first_or_404()
+    inc = Incident.query.get_or_404(incident_id)
+    if inc.user_id != current_user.id and not is_admin():
+        abort(403)
     if inc.image:
         try:
             os.remove(os.path.join(app.config['UPLOAD_FOLDER'], inc.image))
@@ -306,37 +358,6 @@ def delete_incident(incident_id):
     db.session.commit()
     flash('Incident deleted.', 'info')
     return redirect(url_for('dashboard'))
-
-# ---------- Profile ----------
-@app.route('/profile', methods=['GET', 'POST'])
-@login_required
-def profile():
-    if request.method == 'POST':
-        current_user.name = request.form.get('name') or current_user.name
-        current_user.email = request.form.get('email') or current_user.email
-        current_user.dob = request.form.get('dob') or None
-        current_user.gender = request.form.get('gender') or None
-        current_user.address = request.form.get('address') or None
-        current_user.state = request.form.get('state') or None
-        current_user.pin = request.form.get('pin') or None
-
-        pfile = request.files.get('profile_image')
-        if pfile and pfile.filename and allowed_file(pfile.filename):
-            filename = unique_filename(pfile.filename, prefix=f"user{current_user.id}_")
-            save_path = os.path.join(app.config['PROFILE_FOLDER'], filename)
-            pfile.save(save_path)
-            if current_user.profile_image and current_user.profile_image != filename:
-                try:
-                    os.remove(os.path.join(app.config['PROFILE_FOLDER'], current_user.profile_image))
-                except Exception:
-                    pass
-            current_user.profile_image = filename
-
-        db.session.commit()
-        flash('Profile updated successfully!', 'success')
-        return redirect(url_for('profile'))
-
-    return render_template('profile.html', user=current_user)
 
 # ---------- Notice System ----------
 @app.route('/notices')
