@@ -4,66 +4,183 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if notice %}Edit Notice{% else %}Add Notice{% endif %}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
     body {
       font-family: 'Segoe UI', Tahoma, sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #e0f7fa, #80deea);
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       min-height: 100vh;
-      display: flex;
+      /*display: flex;
       flex-direction: column;
+      align-items: center;*/
+      padding: 20px;
+      color: #333;
     }
+    
     .container {
-      max-width: 600px;
-      margin: 40px auto;
+      width: 100%;
+      max-width: 700px;
+      margin: 30px auto;
       background: white;
-      padding: 25px;
-      border-radius: 12px;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      padding: 35px;
+      border-radius: 16px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+      position: relative;
+      overflow: hidden;
     }
+    
+    .container::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 6px;
+      background: linear-gradient(to right, #667eea, #764ba2);
+    }
+    
     h2 {
       text-align: center;
-      color: #006064;
-      margin-bottom: 20px;
+      color: #764ba2;
+      margin-bottom: 30px;
+      font-size: 28px;
+      font-weight: 700;
+      position: relative;
+      padding-bottom: 10px;
     }
+    
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 4px;
+      background: linear-gradient(to right, #667eea, #764ba2);
+      border-radius: 2px;
+    }
+    
+    .form-group {
+      margin-bottom: 25px;
+      position: relative;
+    }
+    
     label {
       font-weight: 600;
       display: block;
-      margin-bottom: 6px;
-      color: #004d40;
+      margin-bottom: 10px;
+      color: #555;
+      font-size: 16px;
+      padding-left: 5px;
     }
+    
     input[type="text"], textarea {
       width: 100%;
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-      margin-bottom: 15px;
-      font-size: 14px;
+      padding: 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 10px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      background-color: #f9f9f9;
     }
+    
+    input[type="text"]:focus, textarea:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
+      outline: none;
+      background-color: #fff;
+    }
+    
     textarea {
       resize: vertical;
-      height: 120px;
+      min-height: 150px;
     }
+    
     .btn {
       display: inline-block;
-      background: #00838f;
+      background: linear-gradient(to right, #667eea, #764ba2);
       color: white;
-      padding: 10px 18px;
+      padding: 14px 28px;
       border: none;
-      border-radius: 6px;
+      border-radius: 10px;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: all 0.3s ease;
       font-weight: 600;
+      font-size: 16px;
+      width: 100%;
+      box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
     }
+    
     .btn:hover {
-      background: #005662;
+      transform: translateY(-2px);
+      box-shadow: 0 7px 20px rgba(102, 126, 234, 0.4);
     }
+    
+    .btn:active {
+      transform: translateY(0);
+    }
+    
     .back {
-      display: inline-block;
-      margin-top: 10px;
-      color: #00838f;
+      display: inline-flex;
+      align-items: center;
+      margin-top: 20px;
+      color: #667eea;
       text-decoration: none;
-      font-weight: bold;
+      font-weight: 600;
+      transition: all 0.3s ease;
+      padding: 8px 16px;
+      border-radius: 6px;
+    }
+    
+    .back:hover {
+      color: #764ba2;
+      background-color: rgba(118, 75, 162, 0.1);
+      transform: translateX(-5px);
+    }
+    
+    .back i {
+      margin-right: 8px;
+      transition: transform 0.3s ease;
+    }
+    
+    .back:hover i {
+      transform: translateX(-3px);
+    }
+    
+    .notification-icon {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 42px;
+      color: #764ba2;
+    }
+    
+    .char-count {
+      text-align: right;
+      font-size: 14px;
+      color: #888;
+      margin-top: 5px;
+    }
+    
+    @media (max-width: 768px) {
+      .container {
+        padding: 25px;
+        margin: 20px auto;
+      }
+      
+      h2 {
+        font-size: 24px;
+      }
+      
+      input[type="text"], textarea {
+        padding: 14px;
+      }
     }
   </style>
 </head>
@@ -72,18 +189,66 @@
   {% include 'navbar.html' %}
 
   <div class="container">
-    <h2>{% if notice %}Edit Notice{% else %}Add Notice{% endif %}</h2>
+    <div class="notification-icon">
+      <i class="fas fa-sticky-note"></i>
+    </div>
+    <h2>{% if notice %}Edit Notice{% else %}Add New Notice{% endif %}</h2>
     <form method="POST">
-      <label for="title">Title</label>
-      <input type="text" id="title" name="title" value="{{ notice.title if notice else '' }}" required>
+      <div class="form-group">
+        <label for="title"><i class="fas fa-heading"></i> Title</label>
+        <input type="text" id="title" name="title" value="{{ notice.title if notice else '' }}" required placeholder="Enter notice title">
+      </div>
 
-      <label for="content">Content</label>
-      <textarea id="content" name="content" required>{{ notice.content if notice else '' }}</textarea>
+      <div class="form-group">
+        <label for="content"><i class="fas fa-align-left"></i> Content</label>
+        <textarea id="content" name="content" required placeholder="Write your notice content here...">{{ notice.content if notice else '' }}</textarea>
+        <div class="char-count"><span id="charCount">0</span> characters</div>
+      </div>
 
-      <button type="submit" class="btn">{% if notice %}Update{% else %}Add{% endif %} Notice</button>
+      <button type="submit" class="btn">
+        <i class="fas fa-{% if notice %}edit{% else %}plus-circle{% endif %}"></i> {% if notice %}Update{% else %}Add{% endif %} Notice
+      </button>
     </form>
-    <a href="{{ url_for('view_notices') }}" class="back">← Back to Notices</a>
+    <a href="{{ url_for('view_notices') }}" class="back">
+      <i class="fas fa-arrow-left"></i> Back to Notices
+    </a>
   </div>
+
+  <script>
+    // Character count for content textarea
+    const contentTextarea = document.getElementById('content');
+    const charCount = document.getElementById('charCount');
+    
+    contentTextarea.addEventListener('input', function() {
+      charCount.textContent = this.value.length;
+    });
+    
+    // Initialize character count on page load
+    charCount.textContent = contentTextarea.value.length;
+    
+    // Add animation to form elements when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const formGroups = document.querySelectorAll('.form-group');
+      const btn = document.querySelector('.btn');
+      
+      formGroups.forEach((group, index) => {
+        group.style.opacity = '0';
+        group.style.transform = 'translateY(20px)';
+        
+        setTimeout(() => {
+          group.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+          group.style.opacity = '1';
+          group.style.transform = 'translateY(0)';
+        }, 100 + (index * 100));
+      });
+      
+      setTimeout(() => {
+        btn.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+        btn.style.opacity = '1';
+        btn.style.transform = 'translateY(0)';
+      }, 100 + (formGroups.length * 100));
+    });
+  </script>
 
 </body>
 </html>
