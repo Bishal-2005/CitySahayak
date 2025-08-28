@@ -5,11 +5,11 @@
   <title>Your Profile</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    /* Background and base */
+    /* Background Gradient */
     body {
       margin: 0;
-      font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #6fb1fc, #4364f7, #3f51b5);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298, #3f51b5);
       min-height: 100vh;
       color: #fff;
     }
@@ -17,10 +17,11 @@
     /* Navbar */
     nav {
       background: rgba(0, 0, 0, 0.6);
-      padding: 10px 20px;
+      padding: 12px 20px;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      backdrop-filter: blur(8px);
     }
     nav .logo {
       display: flex;
@@ -43,34 +44,40 @@
       text-decoration: none;
       font-weight: bold;
     }
-    nav ul li a:hover { text-decoration: underline; }
+    nav ul li a:hover { color: #ffd60a; }
 
     /* Layout */
     .wrap {
       max-width: 1100px;
-      margin: 30px auto;
+      margin: 40px auto;
       padding: 0 15px;
     }
 
     .grid {
       display: grid;
       grid-template-columns: 340px 1fr;
-      gap: 20px;
+      gap: 25px;
     }
 
+    /* Glassmorphic Card */
     .card {
-      background: rgba(255, 255, 255, 0.96);
-      border-radius: 12px;
-      color: #333;
-      box-shadow: 0 8px 24px rgba(0,0,0,0.2);
-      padding: 20px;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 15px;
+      color: #fff;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+      padding: 25px;
+      backdrop-filter: blur(10px);
+      transition: transform 0.3s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
     }
 
     .title {
-      color: #003366;
+      color: #ffd60a;
       margin-top: 0;
-      margin-bottom: 15px;
-      text-align: left;
+      margin-bottom: 18px;
+      text-align: center;
     }
 
     /* Profile card */
@@ -79,14 +86,14 @@
       height: 140px;
       border-radius: 50%;
       object-fit: cover;
-      border: 3px solid #003366;
+      border: 3px solid #ffd60a;
       display: block;
       margin: 10px auto 15px;
       background: #e9eef7;
     }
     .no-photo {
       text-align: center;
-      color: #666;
+      color: #ccc;
       margin-bottom: 10px;
     }
 
@@ -94,10 +101,10 @@
       display: flex;
       justify-content: space-between;
       margin: 8px 0;
-      border-bottom: 1px dashed #ddd;
+      border-bottom: 1px dashed rgba(255,255,255,0.4);
       padding-bottom: 8px;
     }
-    .info-label { color: #666; }
+    .info-label { color: #ffd60a; }
     .info-value { font-weight: 600; }
 
     /* Edit form */
@@ -106,39 +113,43 @@
       grid-template-columns: 1fr 1fr;
       gap: 12px;
     }
-    label { font-weight: bold; color: #333; }
+    label { font-weight: bold; color: #ffd60a; }
     input[type="text"],
-    input[type="email"],
-    input[type="date"],
-    select,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      margin-top: 6px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      font-size: 14px;
-      background: #fff;
-    }
+input[type="email"],
+input[type="date"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 14px;   /* yeh line padding badha raha hai */
+  margin-top: 6px;
+  border: none;
+  border-radius: 10px;  /* thoda aur smooth */
+  font-size: 15px;
+  background: rgba(255,255,255,0.95);
+  color: #000;
+  box-sizing: border-box; /* text overflow issue avoid karega */
+}
     textarea { resize: vertical; min-height: 80px; }
     .full { grid-column: 1 / -1; }
 
     .btn {
-      background: #003366;
-      color: #fff;
+      background: #ffd60a;
+      color: #003366;
       border: none;
       padding: 12px 16px;
       border-radius: 8px;
       cursor: pointer;
       font-weight: bold;
       display: inline-block;
-      margin-top: 10px;
+      margin-top: 12px;
+      width: 100%;
+      transition: background 0.3s;
     }
-    .btn:hover { background: #0055a5; }
+    .btn:hover { background: #ffcd00; }
 
     .note {
       font-size: 12px;
-      color: #666;
+      color: #ddd;
       margin-top: 6px;
     }
 
@@ -169,8 +180,6 @@
         {% if user.profile_image %}
           <img class="avatar" src="{{ url_for('static', filename='profile_pics/' ~ user.profile_image) }}" alt="Profile Photo">
         {% else %}
-          <!-- If you add a default avatar image, place it at /static/default_avatar.png -->
-          <!-- <img class="avatar" src="/static/default_avatar.png" alt="Profile Photo"> -->
           <div class="no-photo">No Profile Photo</div>
         {% endif %}
 

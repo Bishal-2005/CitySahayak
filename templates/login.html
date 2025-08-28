@@ -1,117 +1,121 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - CitySahayak</title>
-    <style>
-        /* Background with gradient */
-        body {
-            font-family: Arial, sans-serif;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Login - CitySahayak</title>
+  <style>
+    /* Background with gradient */
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #1e3c72, #2a5298);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
 
-        /* Container Animation */
-        .login-container {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0px 8px 25px rgba(0,0,0,0.3);
-            width: 350px;
-            animation: fadeIn 1s ease-in-out;
-            text-align: center;
-        }
+    /* Container with glassmorphism + animation */
+    .login-container {
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(12px);
+      padding: 35px;
+      border-radius: 15px;
+      box-shadow: 0px 8px 30px rgba(0, 0, 0, 0.4);
+      width: 360px;
+      animation: fadeIn 1s ease-in-out;
+      text-align: center;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-25px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        /* Logo Styling */
-        .logo {
-            width: 80px;
-            height: auto;
-            margin-bottom: 15px;
-            border-radius: 40%;
-        }
+    /* Logo Styling */
+    .logo {
+      width: 85px;
+      margin-bottom: 18px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,0.6);
+    }
 
-        h2 {
-            color: white;
-            margin-bottom: 20px;
-        }
+    h2 {
+      color: white;
+      margin-bottom: 22px;
+      letter-spacing: 1px;
+    }
 
-        /* Input fields */
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 10px 0;
-            border: none;
-            border-radius: 5px;
-            outline: none;
-            font-size: 16px;
-            box-sizing: border-box;
-        }
+    /* Input fields */
+    input {
+      width: 100%;
+      padding: 13px;
+      margin: 12px 0;
+      border: none;
+      border-radius: 8px;
+      outline: none;
+      font-size: 16px;
+      box-sizing: border-box;
+      background: rgba(255,255,255,0.85);
+    }
 
-        input::placeholder {
-            color: #999;
-            font-size: 15px;
-        }
+    input::placeholder {
+      color: #666;
+      font-size: 15px;
+    }
 
-        /* Button Styling */
-        button {
-            width: 100%;
-            background-color: #00b4d8;
-            color: white;
-            border: none;
-            padding: 12px;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background 0.3s;
-            font-weight: bold;
-        }
+    /* Button Styling */
+    button {
+      width: 100%;
+      background: linear-gradient(135deg, #00b4d8, #0077b6);
+      color: white;
+      border: none;
+      padding: 13px;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: transform 0.2s, background 0.3s;
+      font-weight: bold;
+    }
 
-        button:hover {
-            background-color: #0096c7;
-        }
+    button:hover {
+      background: linear-gradient(135deg, #0096c7, #005f8a);
+      transform: scale(1.03);
+    }
 
-        /* Link Styling */
-        p {
-            margin-top: 15px;
-            color: white;
-        }
+    /* Link Styling */
+    p {
+      margin-top: 18px;
+      color: white;
+      font-size: 14px;
+    }
 
-        a {
-            color: yellow;
-            text-decoration: none;
-        }
+    a {
+      color: #ffdd00;
+      font-weight: bold;
+      text-decoration: none;
+    }
 
-        a:hover {
-            text-decoration: underline;
-        }
-    </style>
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
 </head>
 <body>
 
-    <div class="login-container">
-        <img src="/static/logo.png" alt="CitySahayak Logo" class="logo">
-        <h2>Login</h2>
+  <div class="login-container">
+    <img src="/static/logo.png" alt="CitySahayak Logo" class="logo">
+    <h2>Welcome Back</h2>
 
-        <form method="POST" action="/login">
-            <!-- Changed username field to email -->
-            <input type="email" name="email" placeholder="Email" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <button type="submit">Login</button>
-        </form>
+    <form method="POST" action="/login">
+      <input type="email" name="email" placeholder="Enter your Email" required>
+      <input type="password" name="password" placeholder="Enter your Password" required>
+      <button type="submit">Login</button>
+    </form>
 
-        <p>Don't have an account? <a href="/register">Register here</a></p>
-    </div>
+    <p>Don't have an account? <a href="/register">Register here</a></p>
+  </div>
 
 </body>
 </html>
