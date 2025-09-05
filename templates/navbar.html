@@ -1,41 +1,47 @@
-<nav>
-  <!-- ✅ Logo -->
-  <div class="logo">
-    <img src="/static/logo.png" alt="Logo">
+<nav role="navigation" aria-label="Primary Navigation">
+  <!-- Logo -->
+  <div class="logo" tabindex="0">
+    <img src="/static/logo.png" alt="Logo" />
     ＣｉｔｙＳａｈａｙａｋ
   </div>
 
-  <!-- ✅ Hamburger Menu -->
-  <div class="menu-toggle" onclick="toggleMenu()">☰</div>
+  <!-- Hamburger Menu -->
+  <button class="menu-toggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="nav-links" onclick="toggleMenu(this)">
+    <span class="bar"></span>
+    <span class="bar"></span>
+    <span class="bar"></span>
+  </button>
 
-  <!-- ✅ Nav Links -->
-  <ul id="nav-links">
+  <!-- Nav Links -->
+  <ul id="nav-links" class="nav-links" role="menubar">
     {% if current_user.is_authenticated %}
-      <li><a href="/home">Home</a></li>
-      <li><a href="/notices">Notices</a></li>
-      <li><a href="/report">Report</a></li>
-      <li><a href="/dashboard">Dashboard</a></li>
+      <li role="none"><a href="/home" role="menuitem" class="nav-link">Home</a></li>
+      <li role="none"><a href="/notices" role="menuitem" class="nav-link">Notices</a></li>
+      <li role="none"><a href="/report" role="menuitem" class="nav-link">Report</a></li>
+      <li role="none"><a href="/dashboard" role="menuitem" class="nav-link">Dashboard</a></li>
 
-      <!-- ✅ Profile Dropdown -->
-      <li class="profile-dropdown">
-        <img src="{% if current_user.profile_image %}{{ url_for('static', filename='profile_pics/' ~ current_user.profile_image) }}{% else %}{{ url_for('static', filename='default-avatar.png') }}{% endif %}" 
-             alt="Profile" class="profile-pic" onclick="toggleProfileMenu()">
-        
-        <ul class="dropdown-menu" id="profileMenu">
-          <li><a href="/profile">👤 My Profile</a></li>
-          <li><a href="/settings">⚙ Settings</a></li>
-          <li><a href="/logout">🚪 Logout</a></li>
+      <!-- Profile Dropdown -->
+      <li class="profile-dropdown" role="none">
+        <button class="profile-btn" aria-haspopup="true" aria-expanded="false" aria-controls="profileMenu" onclick="toggleProfileMenu(this)">
+          <img src="{% if current_user.profile_image %}{{ url_for('static', filename='profile_pics/' ~ current_user.profile_image) }}{% else %}{{ url_for('static', filename='default-avatar.png') }}{% endif %}" 
+               alt="Profile" class="profile-pic" />
+          <span class="arrow" aria-hidden="true">▾</span>
+        </button>
+        <ul class="dropdown-menu" id="profileMenu" role="menu" aria-label="Profile submenu">
+          <li role="none"><a href="/profile" role="menuitem">👤 My Profile</a></li>
+          <li role="none"><a href="/settings" role="menuitem">⚙ Settings</a></li>
+          <li role="none"><a href="/logout" role="menuitem">🚪 Logout</a></li>
         </ul>
       </li>
     {% else %}
-      <li><a href="/register">Register</a></li>
-      <li><a href="/login">Login</a></li>
+      <li role="none"><a href="settings.html" role="menuitem">Register</a></li>
+      <li role="none"><a href="/login" role="menuitem">Login</a></li>
     {% endif %}
   </ul>
 </nav>
 
 <style>
-  /* ✅ Navbar Container */
+  /* Navbar Container */
   nav {
     position: sticky;
     top: 0;
@@ -49,7 +55,7 @@
     box-shadow: 0 2px 8px rgba(0,0,0,0.15);
   }
 
-  /* ✅ Logo */
+  /* Logo */
   .logo {
     display: flex;
     align-items: center;
@@ -57,14 +63,15 @@
     font-size: 20px;
     font-weight: bold;
     color: white;
+    user-select: none;
   }
 
   .logo img {
     height: 36px;
   }
 
-  /* ✅ Nav Links */
-  nav ul {
+  /* Nav Links */
+  .nav-links {
     list-style: none;
     display: flex;
     gap: 20px;
@@ -73,54 +80,92 @@
     align-items: center;
   }
 
-  nav ul li {
-    display: flex;
-    align-items: center;
+  .nav-links li {
     position: relative;
   }
 
-  nav ul li a {
+  .nav-links a,
+  .profile-btn {
     color: white;
     text-decoration: none;
     font-weight: 500;
-    padding: 6px 10px;
-    border-radius: 4px;
-    transition: background 0.3s ease;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: none;
+    background: none;
+    font-family: inherit;
+    font-size: 1rem;
   }
 
-  nav ul li a:hover {
+  .nav-links a:hover,
+  .profile-btn:hover,
+  .nav-links a:focus,
+  .profile-btn:focus {
     background: rgba(255, 255, 255, 0.2);
+    outline: none;
   }
 
-  /* ✅ Profile Picture */
+  /* Active link highlight */
+  .nav-links a.active {
+    background: rgba(255, 255, 255, 0.35);
+    font-weight: 700;
+  }
+
+  /* Profile Picture */
   .profile-pic {
     width: 38px;
     height: 38px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid white;
-    cursor: pointer;
     transition: transform 0.2s ease;
   }
 
-  .profile-pic:hover {
+  .profile-pic:hover,
+  .profile-pic:focus {
     transform: scale(1.05);
+    outline: none;
   }
 
-  /* ✅ Dropdown Menu (styled) */
+  /* Arrow icon */
+  .arrow {
+    font-size: 0.7rem;
+    transition: transform 0.3s ease;
+    user-select: none;
+  }
+
+  .profile-dropdown.open .arrow {
+    transform: rotate(180deg);
+  }
+
+  /* Dropdown Menu */
   .dropdown-menu {
     display: none;
     position: absolute;
-    top: 50px;
+    top: 48px;
     right: 0;
-    background: black;
+    background: #111;
     list-style: none;
-    padding: 6px 0;
+    padding: 8px 0;
     margin: 0;
     border-radius: 8px;
-    box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
     min-width: 180px;
-    animation: fadeIn 0.25s ease;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: opacity 0.25s ease, transform 0.25s ease;
+    z-index: 1001;
+  }
+
+  .dropdown-menu.show {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
   }
 
   .dropdown-menu li {
@@ -128,74 +173,108 @@
   }
 
   .dropdown-menu li a {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 12px 16px;
+    display: block;
+    padding: 12px 20px;
     color: whitesmoke;
-    text-decoration: none;
     font-weight: 500;
+    text-decoration: none;
     transition: background 0.3s ease, color 0.3s ease;
   }
 
-  .dropdown-menu li a:hover {
+  .dropdown-menu li a:hover,
+  .dropdown-menu li a:focus {
     background: #1e3c72;
     color: white;
+    outline: none;
   }
 
-  @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(-5px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ✅ Hamburger Menu */
+  /* Hamburger Menu */
   .menu-toggle {
     display: none;
-    font-size: 26px;
-    color: white;
+    flex-direction: column;
+    justify-content: space-around;
+    width: 28px;
+    height: 24px;
+    background: transparent;
+    border: none;
     cursor: pointer;
+    padding: 0;
+    z-index: 1100;
   }
 
-  /* ✅ Responsive */
+  .menu-toggle:focus {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+
+  .menu-toggle .bar {
+    width: 100%;
+    height: 3px;
+    background-color: white;
+    border-radius: 2px;
+    transition: all 0.3s ease;
+    transform-origin: 1px;
+  }
+
+  /* Animate hamburger to X when active */
+  .menu-toggle.active .bar:nth-child(1) {
+    transform: rotate(45deg);
+  }
+  .menu-toggle.active .bar:nth-child(2) {
+    opacity: 0;
+  }
+  .menu-toggle.active .bar:nth-child(3) {
+    transform: rotate(-45deg);
+  }
+
+  /* Responsive */
   @media (max-width: 768px) {
     .menu-toggle {
-      display: block;
-    }
-
-    nav ul {
-      display: none;
-      flex-direction: column;
-      width: 100%;
-      background: #1e3c72;
-      margin-top: 10px;
-      border-radius: 6px;
-      padding: 10px 0;
-    }
-
-    nav ul li {
-      width: 100%;
-      justify-content: center;
-      padding: 8px 0;
-    }
-
-    nav ul.show {
       display: flex;
     }
 
-    /* ✅ Mobile dropdown menu */
+    .nav-links {
+      flex-direction: column;
+      width: 100%;
+      background: #1e3c72;
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+      border-radius: 6px;
+      margin-top: 10px;
+    }
+
+    .nav-links.show {
+      max-height: 500px; /* enough to show all links */
+    }
+
+    .nav-links li {
+      width: 100%;
+      justify-content: center;
+      padding: 12px 0;
+    }
+
+    /* Dropdown menu inside mobile nav */
     .dropdown-menu {
       position: relative;
       top: 0;
       right: 0;
-      box-shadow: none;
       background: #f9f9f9;
+      box-shadow: none;
+      opacity: 1 !important;
+      transform: none !important;
+      border-radius: 0 0 6px 6px;
+      padding: 0;
+      margin-top: 4px;
     }
 
     .dropdown-menu li a {
       color: #333;
+      padding: 12px 20px;
     }
 
-    .dropdown-menu li a:hover {
+    .dropdown-menu li a:hover,
+    .dropdown-menu li a:focus {
       background: #ddd;
       color: #000;
     }
@@ -203,23 +282,57 @@
 </style>
 
 <script>
-  // ✅ Toggle Hamburger Menu
-  function toggleMenu() {
-    document.getElementById("nav-links").classList.toggle("show");
+  // Toggle Hamburger Menu
+  function toggleMenu(button) {
+    const navLinks = document.getElementById("nav-links");
+    navLinks.classList.toggle("show");
+    button.classList.toggle("active");
+    const expanded = button.getAttribute("aria-expanded") === "true" || false;
+    button.setAttribute("aria-expanded", !expanded);
   }
 
-  // ✅ Toggle Profile Dropdown
-  function toggleProfileMenu() {
-    let menu = document.getElementById("profileMenu");
-    menu.style.display = (menu.style.display === "block") ? "none" : "block";
-  }
+  // Toggle Profile Dropdown
+  function toggleProfileMenu(button) {
+    const dropdown = document.getElementById("profileMenu");
+    const parentLi = button.parentElement;
+    const isOpen = dropdown.classList.contains("show");
 
-  // ✅ Close Profile Menu when clicking outside
-  document.addEventListener("click", function(event) {
-    let profileMenu = document.getElementById("profileMenu");
-    let profilePic = document.querySelector(".profile-pic");
-    if (profileMenu && !profileMenu.contains(event.target) && !profilePic.contains(event.target)) {
-      profileMenu.style.display = "none";
+    if (isOpen) {
+      dropdown.classList.remove("show");
+      parentLi.classList.remove("open");
+      button.setAttribute("aria-expanded", "false");
+    } else {
+      dropdown.classList.add("show");
+      parentLi.classList.add("open");
+      button.setAttribute("aria-expanded", "true");
     }
+  }
+
+  // Close dropdowns when clicking outside
+  document.addEventListener("click", function(event) {
+    const profileDropdown = document.querySelector(".profile-dropdown");
+    const dropdownMenu = document.getElementById("profileMenu");
+    const profileBtn = document.querySelector(".profile-btn");
+
+    if (profileDropdown && dropdownMenu && profileBtn) {
+      if (!profileDropdown.contains(event.target)) {
+        dropdownMenu.classList.remove("show");
+        profileDropdown.classList.remove("open");
+        profileBtn.setAttribute("aria-expanded", "false");
+      }
+    }
+  });
+
+  // Close mobile menu on link click (optional)
+  document.querySelectorAll("#nav-links a").forEach(link => {
+    link.addEventListener("click", () => {
+      const navLinks = document.getElementById("nav-links");
+      const menuToggle = document.querySelector(".menu-toggle");
+      if (navLinks.classList.contains("show")) {
+        navLinks.classList.remove("show");
+        menuToggle.classList.remove("active");
+        menuToggle.setAttribute("aria-expanded", "false");
+      }
+    });
   });
 </script>

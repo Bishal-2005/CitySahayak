@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Settings</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <style>
+    body {
+      background-color: #f8f9fa;
+      transition: background-color 0.3s, color 0.3s;
+      font-size: 1rem;
+    }
+
+    .card {
+      border-radius: 12px;
+      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s, color 0.3s;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .form-control,
+    .btn,
+    .form-check-input,
+    select {
+      border-radius: 8px;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 575.98px) {
+      body {
+        font-size: 0.9rem;
+      }
+      .btn, .form-control, select {
+        width: 100% !important;
+      }
+    }
+
+    /* 🌙 Dark Mode Styling */
+    body.dark-mode {
+      background-color: #181a1b;
+      color: #e4e6eb;
+    }
+
+    body.dark-mode .card {
+      background-color: #242526;
+      color: #f5f6f7;
+      border: 1px solid #3a3b3c;
+    }
+
+    body.dark-mode .form-control,
+    body.dark-mode select {
+      background-color: #3a3b3c;
+      color: #ffffff;
+      border: 1px solid #555;
+    }
+
+    body.dark-mode .form-control::placeholder {
+      color: #b0b3b8;
+    }
+
+    body.dark-mode .form-control:focus,
+    body.dark-mode select:focus {
+      background-color: #4a4b4d;
+      border-color: #0d6efd;
+      color: #fff;
+    }
+
+    body.dark-mode .btn-primary {
+      background-color: #0d6efd;
+      border-color: #0d6efd;
+    }
+
+    body.dark-mode .btn-danger {
+      background-color: #dc3545;
+      border-color: #dc3545;
+    }
+
+    /* Dark Mode Toggle Button */
+    .toggle-dark {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 1050;
+    }
+
+    /* Session list styling */
+    .session-item {
+      border-bottom: 1px solid #ddd;
+      padding: 8px 0;
+    }
+
+    body.dark-mode .session-item {
+      border-color: #3a3b3c;
+    }
+
+    /* High Contrast Mode */
+    body.high-contrast {
+      background-color: #000 !important;
+      color: #fff !important;
+    }
+
+    body.high-contrast .card {
+      background-color: #000 !important;
+      border-color: #fff !important;
+      color: #fff !important;
+    }
+
+    body.high-contrast .btn-primary {
+      background-color: #fff !important;
+      color: #000 !important;
+      border-color: #fff !important;
+    }
+
+    body.high-contrast .btn-outline-secondary {
+      border-color: #fff !important;
+      color: #fff !important;
+    }
+
+    body.high-contrast .form-control,
+    body.high-contrast select {
+      background-color: #000 !important;
+      color: #fff !important;
+      border-color: #fff !important;
+    }
+
+    body.high-contrast .form-control::placeholder {
+      color: #ccc !important;
+    }
+  </style>
+</head>
+<body>
+  {% include 'navbar.html' %}
+
+  <!-- 🌙 Dark Mode Toggle -->
+  <button class="btn btn-secondary toggle-dark" onclick="toggleDarkMode()">🌙</button>
+
+  <div class="container my-5">
+    <h2 class="mb-4 text-center">⚙️ Settings</h2>
+
+    <div class="row g-4">
+
+      <!-- Notification Preferences -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+          <h5 class="mb-3">🔔 Notification Preferences</h5>
+          <form id="notification-form">
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="email-notifications" checked />
+              <label class="form-check-label" for="email-notifications">
+                Email Notifications
+              </label>
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="sms-notifications" />
+              <label class="form-check-label" for="sms-notifications">
+                SMS Notifications
+              </label>
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="push-notifications" checked />
+              <label class="form-check-label" for="push-notifications">
+                Push Notifications
+              </label>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-primary flex-grow-1 me-2">Save</button>
+              <button type="reset" class="btn btn-outline-secondary">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Privacy Settings -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+          <h5 class="mb-3">🔒 Privacy Settings</h5>
+          <form id="privacy-form">
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="profile-private" />
+              <label class="form-check-label" for="profile-private">
+                Make my profile private
+              </label>
+            </div>
+            <div class="form-check mb-3">
+              <input class="form-check-input" type="checkbox" id="data-sharing" checked />
+              <label class="form-check-label" for="data-sharing">
+                Allow data sharing with partners
+              </label>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-primary flex-grow-1 me-2">Save</button>
+              <button type="reset" class="btn btn-outline-secondary">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Language Selection -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+          <h5 class="mb-3">🌐 Language Selection</h5>
+          <form id="language-form">
+            <select class="form-select" id="language-select" aria-label="Select language">
+              <option value="en" selected>English</option>
+              <option value="hi">Hindi</option>
+              <option value="es">Spanish</option>
+              <option value="fr">French</option>
+              <option value="zh">Chinese</option>
+            </select>
+            <div class="d-flex justify-content-between mt-3">
+              <button type="submit" class="btn btn-primary flex-grow-1 me-2">Save</button>
+              <button type="reset" class="btn btn-outline-secondary">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Two-Factor Authentication -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+          <h5 class="mb-3">🔐 Two-Factor Authentication (2FA)</h5>
+          <form id="2fa-form">
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="2fa-toggle" />
+              <label class="form-check-label" for="2fa-toggle">Enable 2FA</label>
+            </div>
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-primary flex-grow-1 me-2">Save</button>
+              <button type="reset" class="btn btn-outline-secondary">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Timezone Selection -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+          <h5 class="mb-3">🕒 Timezone Selection</h5>
+          <form id="timezone-form">
+            <select class="form-select" id="timezone-select" aria-label="Select timezone">
+              <option value="UTC" selected>UTC</option>
+              <option value="Asia/Kolkata">Asia/Kolkata (India)</option>
+              <option value="America/New_York">America/New_York (USA)</option>
+              <option value="Europe/London">Europe/London (UK)</option>
+              <option value="Asia/Tokyo">Asia/Tokyo (Japan)</option>
+              <option value="Australia/Sydney">Australia/Sydney</option>
+              <!-- Add more timezones as needed -->
+            </select>
+            <div class="d-flex justify-content-between mt-3">
+              <button type="submit" class="btn btn-primary flex-grow-1 me-2">Save</button>
+              <button type="reset" class="btn btn-outline-secondary">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Accessibility Settings -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 h-100">
+          <h5 class="mb-3">♿ Accessibility Settings</h5>
+          <form id="accessibility-form">
+            <label for="font-size-select" class="form-label">Font Size</label>
+            <select class="form-select mb-3" id="font-size-select" aria-label="Select font size">
+              <option value="small">Small</option>
+              <option value="medium" selected>Medium (Default)</option>
+              <option value="large">Large</option>
+              <option value="xlarge">Extra Large</option>
+            </select>
+
+            <div class="form-check form-switch mb-3">
+              <input class="form-check-input" type="checkbox" id="high-contrast-toggle" />
+              <label class="form-check-label" for="high-contrast-toggle">Enable High Contrast Mode</label>
+            </div>
+
+            <div class="d-flex justify-content-between">
+              <button type="submit" class="btn btn-primary flex-grow-1 me-2">Save</button>
+              <button type="reset" class="btn btn-outline-secondary">Reset</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Session Management -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 h-100 d-flex flex-column">
+          <h5 class="mb-3">🖥️ Active Sessions</h5>
+          <div id="session-list" class="mb-3 flex-grow-1 overflow-auto" style="max-height: 200px;">
+            <!-- Example sessions -->
+            <div class="session-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>Chrome on Windows</strong><br />
+                Last active: 2 hours ago
+              </div>
+              <button class="btn btn-sm btn-outline-danger logout-session-btn">Logout</button>
+            </div>
+            <div class="session-item d-flex justify-content-between align-items-center">
+              <div>
+                <strong>Firefox on Mac</strong><br />
+                Last active: 1 day ago
+              </div>
+              <button class="btn btn-sm btn-outline-danger logout-session-btn">Logout</button>
+            </div>
+            <!-- Add more sessions dynamically -->
+          </div>
+          <button id="logout-all-btn" class="btn btn-danger w-100">Logout All Sessions</button>
+        </div>
+      </div>
+
+      <!-- Account Deactivation -->
+      <div class="col-12 col-md-6 col-lg-4">
+        <div class="card p-4 h-100 d-flex flex-column justify-content-between">
+          <h5 class="mb-3 text-danger">⚠️ Account Deactivation</h5>
+          <p class="mb-3">
+            Deactivating your account will disable your profile and remove your data from public view. You can reactivate anytime by logging in.
+          </p>
+          <button id="deactivate-btn" class="btn btn-danger w-100 mt-auto">Deactivate Account</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    // 🌙 Toggle Dark Mode
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark-mode");
+      if (document.body.classList.contains("dark-mode")) {
+        localStorage.setItem("theme", "dark");
+      } else {
+        localStorage.setItem("theme", "light");
+      }
+    }
+
+    // Load saved theme preference
+    window.onload = () => {
+      if (localStorage.getItem("theme") === "dark") {
+        document.body.classList.add("dark-mode");
+      }
+    };
+
+    // Form submit handlers with alerts (replace with real logic)
+    document.getElementById("notification-form").addEventListener("submit", e => {
+      e.preventDefault();
+      alert("Notification preferences saved!");
+    });
+    document.getElementById("privacy-form").addEventListener("submit", e => {
+      e.preventDefault();
+      alert("Privacy settings saved!");
+    });
+    document.getElementById("language-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const lang = document.getElementById("language-select").value;
+      alert("Language set to: " + lang);
+    });
+    document.getElementById("2fa-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const enabled = document.getElementById("2fa-toggle").checked;
+      alert("Two-Factor Authentication " + (enabled ? "enabled" : "disabled"));
+    });
+    document.getElementById("timezone-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const tz = document.getElementById("timezone-select").value;
+      alert("Timezone set to: " + tz);
+    });
+
+    // Accessibility form handler
+    document.getElementById("accessibility-form").addEventListener("submit", e => {
+      e.preventDefault();
+      const fontSize = document.getElementById("font-size-select").value;
+      const highContrast = document.getElementById("high-contrast-toggle").checked;
+
+      // Set font size on body
+      switch (fontSize) {
+        case "small":
+          document.body.style.fontSize = "0.85rem";
+          break;
+        case "medium":
+          document.body.style.fontSize = "1rem";
+          break;
+        case "large":
+          document.body.style.fontSize = "1.15rem";
+          break;
+        case "xlarge":
+          document.body.style.fontSize = "1.3rem";
+          break;
+      }
+
+      // Toggle high contrast mode class
+      if (highContrast) {
+        document.body.classList.add("high-contrast");
+      } else {
+        document.body.classList.remove("high-contrast");
+      }
+
+      alert("Accessibility settings saved!");
+    });
+
+    // Reset accessibility settings on form reset
+    document.getElementById("accessibility-form").addEventListener("reset", () => {
+      document.body.style.fontSize = "1rem";
+      document.body.classList.remove("high-contrast");
+    });
+
+    // Session management buttons
+    document.querySelectorAll(".logout-session-btn").forEach(btn => {
+      btn.addEventListener("click", e => {
+        if (confirm("Logout this session?")) {
+          // Remove session from UI (simulate)
+          e.target.closest(".session-item").remove();
+          alert("Session logged out.");
+        }
+      });
+    });
+
+    document.getElementById("logout-all-btn").addEventListener("click", () => {
+      if (confirm("Logout all sessions?")) {
+        const sessionList = document.getElementById("session-list");
+        sessionList.innerHTML = "<p>No active sessions.</p>";
+        alert("All sessions logged out.");
+      }
+    });
+
+    // Account deactivation
+    document.getElementById("deactivate-btn").addEventListener("click", () => {
+      if (confirm("Are you sure you want to deactivate your account?")) {
+        alert("Your account has been deactivated.");
+        // Add actual deactivation logic here
+      }
+    });
+  </script>
+</body>
+</html>

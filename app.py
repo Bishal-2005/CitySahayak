@@ -359,6 +359,12 @@ def delete_incident(incident_id):
     flash('Incident deleted.', 'info')
     return redirect(url_for('dashboard'))
 
+#--------------setting---------------
+@app.route('/settings')
+def settings():
+    return render_template('settings.html')
+
+
 # ---------- Notice System ----------
 @app.route('/notices')
 @login_required

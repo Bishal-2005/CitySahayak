@@ -1,19 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>CitySahayak - Home</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      font-family: 'Roboto', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
       background: #f5f7fa;
       color: #333;
+      line-height: 1.6;
     }
 
-    /* ✅ Hero Section */
+    /* Hero Section */
     .hero {
+      position: relative;
       background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.6)),
                   url('/static/city-bg.png') center/cover no-repeat;
       height: 70vh;
@@ -24,142 +28,234 @@
       text-align: center;
       color: white;
       padding: 0 20px;
+      overflow: hidden;
     }
     .hero h1 {
-      font-size: 2.5rem;
-      margin-bottom: 480px;
+      font-size: 3rem;
+      margin-bottom: 200px;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.7);
     }
-    
-
-    /* ✅ Action Cards */
-    .cards {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 20px;
-      padding: 30px;
-      max-width: 1100px;
-      margin: auto;
+    .hero p {
+      font-size: 1.25rem;
+      max-width: 600px;
+      margin-bottom: 30px;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.6);
     }
-    .card {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      text-align: center;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
-    }
-    .card h3 {
-      margin-bottom: 10px;
-      color: #1e3c72;
-    }
-    .card a {
-      display: inline-block;
-      margin-top: 10px;
-      padding: 10px 20px;
+    .hero .btn-primary {
       background: linear-gradient(90deg, #1e3c72, #2a5298);
+      border: none;
+      padding: 12px 30px;
+      font-size: 1.1rem;
+      border-radius: 30px;
       color: white;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(46, 61, 73, 0.4);
+      transition: background 0.3s ease, transform 0.2s ease;
       text-decoration: none;
-      border-radius: 6px;
-      transition: background 0.3s ease;
+      display: inline-block;
     }
-    .card a:hover {
+    .hero .btn-primary:hover {
       background: linear-gradient(90deg, #2a5298, #1e3c72);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(46, 61, 73, 0.6);
     }
 
-    /* ✅ News Ticker */
+    /* News Ticker */
     .news-ticker {
       background: #1e3c72;
       color: white;
-      padding: 8px 0;
+      padding: 10px 0;
       overflow: hidden;
-      white-space: nowrap;
-    }
-    .news-ticker marquee {
+      position: relative;
+      font-weight: 600;
       font-size: 1rem;
-      font-weight: 500;
+    }
+    .news-ticker .ticker-content {
+      display: inline-block;
+      white-space: nowrap;
+      padding-left: 100%;
+      animation: ticker 20s linear infinite;
+    }
+    @keyframes ticker {
+      0% { transform: translateX(0); }
+      100% { transform: translateX(-100%); }
     }
 
-    /* ✅ Notice Board */
+    /* Cards Section */
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 25px;
+      padding: 40px 20px;
+      max-width: 1100px;
+      margin: 0 auto 60px;
+    }
+    .card {
+      background: white;
+      padding: 30px 25px;
+      border-radius: 15px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+    .card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+    }
+    .card h3 {
+      margin-bottom: 15px;
+      color: #1e3c72;
+      font-size: 1.6rem;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    .card p {
+      flex-grow: 1;
+      font-size: 1rem;
+      color: #555;
+      margin-bottom: 20px;
+    }
+    .card a {
+      display: inline-block;
+      padding: 12px 28px;
+      background: linear-gradient(90deg, #1e3c72, #2a5298);
+      color: white;
+      text-decoration: none;
+      border-radius: 30px;
+      font-weight: 600;
+      box-shadow: 0 4px 15px rgba(46, 61, 73, 0.4);
+      transition: background 0.3s ease, transform 0.2s ease;
+    }
+    .card a:hover {
+      background: linear-gradient(90deg, #2a5298, #1e3c72);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(46, 61, 73, 0.6);
+    }
+
+    /* Notice Board */
     .notice-board {
       max-width: 1100px;
-      margin: auto;
-      padding: 20px;
+      margin: 0 auto 60px;
+      padding: 0 20px 40px;
     }
     .notice-board h2 {
       text-align: center;
       color: #2a5298;
-      margin-bottom: 15px;
+      margin-bottom: 25px;
+      font-size: 2rem;
+      font-weight: 700;
+      letter-spacing: 1px;
     }
     .notice {
       background: white;
-      padding: 15px;
-      border-left: 5px solid #2a5298;
-      margin-bottom: 10px;
-      border-radius: 6px;
-      box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+      padding: 20px 25px;
+      border-left: 6px solid #2a5298;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+      transition: box-shadow 0.3s ease;
+    }
+    .notice:hover {
+      box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+    }
+    .notice strong {
+      font-weight: 700;
+      color: #1e3c72;
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.1rem;
     }
     .notice small {
       display: block;
-      color: gray;
-      font-size: 0.85rem;
+      color: #777;
+      font-size: 0.9rem;
+      margin-top: 5px;
     }
 
-    /* ✅ Responsive Fix */
-    @media (max-width: 600px) {
-      .hero h1 { font-size: 1.8rem; }
-      .hero p { font-size: 1rem; }
+    /* Responsive */
+    @media (max-width: 768px) {
+      .hero h1 {
+        font-size: 2.2rem;
+      }
+      .hero p {
+        font-size: 1.1rem;
+      }
+      .cards {
+        padding: 30px 15px;
+        gap: 20px;
+      }
+    }
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+      .hero p {
+        font-size: 1rem;
+      }
+      .card h3 {
+        font-size: 1.3rem;
+      }
+      .card p {
+        font-size: 0.9rem;
+      }
+      .card a {
+        padding: 10px 20px;
+        font-size: 0.95rem;
+      }
     }
   </style>
 </head>
 <body>
 
-  <!-- ✅ Navbar Include -->
+  <!-- Navbar Include -->
   {% include 'navbar.html' %}
 
-  <!-- ✅ Hero Section -->
-  <section class="hero">
+  <!-- Hero Section -->
+  <section class="hero" role="banner" aria-label="Welcome section">
     <h1>Welcome to CitySahayak</h1>
-   
+    <p>Your trusted partner in making the city safer and smarter.</p>
+    <a href="/report" class="btn-primary" aria-label="Report an incident now">Report an Incident</a>
   </section>
 
-  <!-- ✅ News Ticker -->
-  <div class="news-ticker">
-    <marquee behavior="scroll" direction="left">
-      🚨 Traffic alert in Bhubaneswar city center | 🌧️ Heavy rain expected tomorrow | 📢 Public meeting at Town Hall on Sunday
-    </marquee>
+  <!-- News Ticker -->
+  <div class="news-ticker" aria-live="polite" aria-atomic="true" role="region" aria-label="Latest news ticker">
+    <div class="ticker-content">
+      🚨 Traffic alert in Bhubaneswar city center &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 🌧️ Heavy rain expected tomorrow &nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp; 📢 Public meeting at Town Hall on Sunday
+    </div>
   </div>
 
-  <!-- ✅ Action Cards -->
-  <section class="cards">
-    <div class="card">
+  <!-- Action Cards -->
+  <section class="cards" aria-label="Main actions">
+    <div class="card" tabindex="0">
       <h3>📝 Report an Incident</h3>
       <p>Help make the city safer by reporting issues quickly and easily.</p>
-      <a href="/report">Report Now</a>
+      <a href="/report" aria-label="Go to report incident page">Report Now</a>
     </div>
-    <div class="card">
+    <div class="card" tabindex="0">
       <h3>📊 View Dashboard</h3>
       <p>Track all your reported incidents and stay updated.</p>
-      <a href="/dashboard">View Dashboard</a>
+      <a href="/dashboard" aria-label="Go to dashboard page">View Dashboard</a>
     </div>
-    <div class="card">
+    <div class="card" tabindex="0">
       <h3>📰 Latest News</h3>
       <p>Stay informed with the most recent updates and announcements.</p>
-      <a href="#news">Read News</a>
+      <a href="#news" aria-label="Read latest news">Read News</a>
     </div>
   </section>
 
-  <!-- ✅ Notice Board -->
-  <section class="notice-board">
+  <!-- Notice Board -->
+  <section class="notice-board" aria-label="Notice board">
     <h2>📢 Notice Board</h2>
-    <div class="notice">
+    <div class="notice" tabindex="0">
       <strong>System Maintenance:</strong> The site will be under maintenance on 20th August from 2 AM to 5 AM.
       <small>Posted on: 15-Aug-2025</small>
     </div>
-    <div class="notice">
+    <div class="notice" tabindex="0">
       <strong>New Feature:</strong> Profile picture upload now available in your account settings.
       <small>Posted on: 10-Aug-2025</small>
     </div>
